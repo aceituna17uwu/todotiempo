@@ -1,0 +1,51 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head>     
+  <meta charset="UTF-8">     
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+  <title>Catálogo - Todo Tiempo</title>     
+  <link rel="preconnect" href="https://fonts.googleapis.com">     
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>     
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">     
+  <link rel="stylesheet" href="stylec.css"> 
+</head> 
+<body>     
+  <nav class="barra-superior">         
+    <a href="#" class="marca-container">
+      <img src="logoa.png" alt="Logo" class="logo-nav">         
+      <span class="nombre-marca">Todo Tiempo</span>
+    </a>
+    <div class="menu-enlaces">             
+      <a href="#" id="btn-salir">CERRAR SESIÓN</a>         
+    </div>     
+  </nav>  
+  
+  <!-- NUEVO: MARQUESINA ESTILO EDITORIAL / STREETWEAR -->
+  <div class="marquesina-contenedor">
+    <div class="marquesina">
+      <span>✦ NUEVA COLECCIÓN DISPONIBLE ✦ ENVÍO GRATIS EN PEDIDOS MAYORES A $500 ✦ DISEÑADO PARA CADA CLIMA ✦ TODOTIEMPO ✦ </span>
+      <span>NUEVA COLECCIÓN DISPONIBLE ✦ ENVÍO GRATIS EN PEDIDOS MAYORES A $500 ✦ DISEÑADO PARA CADA CLIMA ✦ TODOTIEMPO ✦ </span>
+    </div>
+  </div>
+
+  <main class="bienvenida">         
+    <h1>HOLA, <span id="nombre-usuario"></span></h1>         
+    <p>Explora nuestras colecciones diseñadas con precisión para cada clima.</p>         
+    
+    <div class="filtros-estaciones">
+      <button class="btn-filtro" data-estacion="todas">TODAS</button>
+      <button class="btn-filtro" data-estacion="primavera">PRIMAVERA</button>
+      <button class="btn-filtro" data-estacion="verano">VERANO</button>
+      <button class="btn-filtro" data-estacion="otono">OTOÑO</button>
+      <button class="btn-filtro" data-estacion="invierno">INVIERNO</button>
+    </div>
+
+    <div id="contenedor-ropa" class="grid-productos">
+        <!-- Las tarjetas se inyectan con JS -->
+    </div>
+  </main>     
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>     
+  <script src="app.js"></script> 
+</body> 
+</html>

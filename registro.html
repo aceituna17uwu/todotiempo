@@ -1,0 +1,56 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head>     
+  <meta charset="UTF-8">     
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+  <title>Crear cuenta - Todo Tiempo</title>     
+  <link rel="preconnect" href="https://fonts.googleapis.com">     
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>     
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">     
+  <link rel="stylesheet" href="stylec.css"> 
+</head> 
+<body>     
+  <nav class="barra-superior">         
+    <a href="login.html" class="marca-container">
+      <img src="logoa.png" alt="Logo" class="logo-nav">         
+      <span class="nombre-marca">Todo Tiempo</span>
+    </a>         
+    <div class="menu-enlaces">             
+      <a href="login.html">Iniciar sesión</a>             
+      <a href="registro.html">Crear cuenta</a>         
+    </div>     
+  </nav>     
+  <main class="contenedor-formularios">         
+    <section>             
+      <h2>¡Crea tu cuenta con nosotros!</h2>             
+      <p class="subtitulo">Toma menos de una estación</p>             
+      <form id="form-registro">                 
+        <div class="campo">                     
+          <label for="nombre">Nombre(s).</label>                     
+          <input type="text" id="nombre" name="nombre" placeholder="Apellidos opcionales." required>                 
+        </div>                 
+        <div class="campo">                     
+          <label for="usuario">Nombre de usuario.</label>                     
+          <input type="text" id="usuario" name="usuario" placeholder="¿Cómo te verán los demás?" required>                 
+        </div>                 
+        <div class="campo">                     
+          <label for="correo">Correo.</label>                     
+          <input type="email" id="correo" name="correo" placeholder="@ejemplo.com" required>                 
+        </div>                                     
+        <div class="campo">                     
+          <label for="contraseña">Contraseña.</label>                     
+          <input type="password" id="contraseña" name="contraseña" placeholder="Mínimo 6 caracteres." minlength="6" required>                 
+        </div>                 
+        <a href="login.html" class="enlace-sutil">¿Ya tienes cuenta? Inicia sesión.</a>                 
+        <div class="acciones">                     
+          <button type="submit" id="btn-registrar">Crear cuenta.</button>                     
+          <button type="button" id="btn-cancelar">Cancelar.</button>                 
+        </div>                 
+        <p class="aviso" id="aviso" role="alert"></p>             
+      </form>         
+    </section>     
+  </main>     
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>     
+  <script src="app.js"></script> 
+</body> 
+</html>
