@@ -1,6 +1,20 @@
-// Requiere que app.js se cargue antes (ahí se crea "db")
+const RESPUESTA_BASE = "¡Gracias por escribir a Todo Tiempo! Un asesor te responderá pronto.";
+const RESPUESTAS = [
+  { palabras: ["hola", "buenas", "buen dia", "buenos dias", "buenas tardes"], texto: "¡Hola! Bienvenido a Todo Tiempo. ¿En qué te podemos ayudar?" },
+  { palabras: ["precio", "cuesta", "costo", "cuanto"], texto: "El precio aparece debajo de cada prenda en el catálogo." },
+  { palabras: ["talla", "medida"], texto: "Manejamos tallas CH, M y G. Dinos cuál prenda te interesa." },
+  { palabras: ["envio", "entrega", "domicilio"], texto: "Hacemos envíos a todo el país en 3 a 5 días hábiles." }
+];
+
+function buscarRespuesta(texto) {
+  const limpio = texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  for (const r of RESPUESTAS) {
+    if (r.palabras.some(function (p) { return limpio.includes(p); })) return r.texto;
+  }
+  return null;
+}
+
 (async function () {
-  // 1) Protección: sin sesión, al login
   const { data } = await db.auth.getSession();
   if (!data.session) {
     window.location.href = "login.html";
@@ -14,29 +28,25 @@
   const lista = document.getElementById("mensajes");
   const form = document.getElementById("form-chat");
   const input = document.getElementById("texto");
-  const yaPintados = new Set(); // evita duplicar mensajes (historial + tiempo real)
+  const yaPintados = new Set();
+  let primerMensaje = true;
 
-  function pintar(m) {
-    if (yaPintados.has(m.id)) return;
-    yaPintados.add(m.id);
-
+  function crearBurbuja(clase, nombre, contenido, fecha) {
     const vacio = lista.querySelector(".vacio");
     if (vacio) vacio.remove();
 
-    const propio = m.user_id === usuario.id;
-
     const burbuja = document.createElement("div");
-    burbuja.className = "burbuja " + (propio ? "mio" : "otro");
+    burbuja.className = "burbuja " + clase;
 
     const autor = document.createElement("span");
     autor.className = "autor";
-    autor.textContent = propio ? "Tú" : m.autor || "Anónimo";
+    autor.textContent = nombre;
 
     const texto = document.createElement("p");
-    texto.textContent = m.contenido; // textContent: nada de HTML inyectado
+    texto.textContent = contenido;
 
     const hora = document.createElement("time");
-    hora.textContent = new Date(m.created_at).toLocaleTimeString("es-MX", {
+    hora.textContent = new Date(fecha).toLocaleTimeString("es-MX", {
       hour: "2-digit",
       minute: "2-digit"
     });
@@ -46,7 +56,17 @@
     lista.scrollTop = lista.scrollHeight;
   }
 
-  // 2) Historial (últimos 100 mensajes)
+  function pintar(m) {
+    if (yaPintados.has(m.id)) return;
+    yaPintados.add(m.id);
+    const propio = m.user_id === usuario.id;
+    crearBurbuja(propio ? "mio" : "otro", propio ? "Tú" : m.autor || "Anónimo", m.contenido, m.created_at);
+  }
+
+  function pintarBot(contenido) {
+    crearBurbuja("bot", "Todo Tiempo (automático)", contenido, new Date());
+  }
+
   const { data: historial, error } = await db
     .from("mensajes")
     .select("*")
@@ -64,7 +84,6 @@
   }
   historial.forEach(pintar);
 
-  // 3) Mensajes nuevos en tiempo real
   db.channel("chat-todo-tiempo")
     .on(
       "postgres_changes",
@@ -75,21 +94,29 @@
     )
     .subscribe();
 
-  // 4) Enviar mensaje
   form.addEventListener("submit", async function (evento) {
     evento.preventDefault();
     const contenido = input.value.trim();
     if (!contenido) return;
 
     input.value = "";
-    const { error: errorEnvio } = await db
+    const { data: fila, error: errorEnvio } = await db
       .from("mensajes")
-      .insert({ contenido: contenido, autor: miNombre });
+      .insert({ contenido: contenido, autor: miNombre })
+      .select()
+      .single();
 
     if (errorEnvio) {
       console.error(errorEnvio);
-      input.value = contenido; // devolver el texto para no perderlo
+      input.value = contenido;
       alert("No se pudo enviar el mensaje. Intenta de nuevo.");
+      return;
     }
+
+    pintar(fila);
+
+    const respuesta = buscarRespuesta(contenido) || (primerMensaje ? RESPUESTA_BASE : null);
+    primerMensaje = false;
+    if (respuesta) setTimeout(function () { pintarBot(respuesta); }, 900);
   });
 })();
