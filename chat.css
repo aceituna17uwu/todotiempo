@@ -60,3 +60,11 @@
   .burbuja { max-width: 90%; }
   .chat-mensajes { height: 58vh; }
 }
+
+.burbuja.bot {
+  align-self: flex-start;
+  background-color: var(--papel);
+  border-color: var(--color-actual);
+  box-shadow: 4px 4px 0 var(--color-actual);
+}
+.burbuja.bot .autor { color: var(--color-actual); }
