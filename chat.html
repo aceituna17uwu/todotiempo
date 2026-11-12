@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat — Todo Tiempo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="stylec.css">
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+
+    <nav class="barra-superior">
+        <img src="logo.png" alt="Todo Tiempo" class="logo-nav">
+        <div class="menu-enlaces">
+            <a href="catalogo.html">Inicio</a>
+            <a href="chat.html">Chat</a>
+            <a href="#" id="btn-salir">Cerrar sesión</a>
+        </div>
+    </nav>
+
+    <main class="chat">
+        <h1>Chat de Todo Tiempo</h1>
+        <p class="chat-sub">Pregunta por prendas, tallas o pedidos. Todos los clientes ven la conversación.</p>
+
+        <section id="mensajes" class="chat-mensajes" aria-live="polite"></section>
+
+        <form id="form-chat" class="chat-form">
+            <input id="texto" type="text" placeholder="Escribe un mensaje" maxlength="300" autocomplete="off" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>
