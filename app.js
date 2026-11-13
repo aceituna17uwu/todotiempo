@@ -150,7 +150,7 @@ async function renderizarCatalogo(estacionFiltro = null) {
 
   contenedorCatalogo.innerHTML = "";
 
-  if (!productos || productos.length === 0) {
+   if (!productos || productos.length === 0) {
     contenedorCatalogo.innerHTML = "<p>No hay productos disponibles.</p>";
     return;
   }
@@ -158,6 +158,14 @@ async function renderizarCatalogo(estacionFiltro = null) {
   // HTML por producto, se generan aqui mismo
   productos.forEach(producto => {
     const imagenUrl = producto.imagen_url.replace('otoño', 'oto o'); 
+
+    // guardamos los datos para que el carrito los encuentre por id
+    productosPorId[producto.id] = {
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: Number(producto.precio),
+      imagen: imagenUrl
+    };
 
     const tarjetaHTML = `
       <div class="tarjeta-producto">
@@ -167,7 +175,7 @@ async function renderizarCatalogo(estacionFiltro = null) {
         <div class="info-producto">
           <h3>${producto.nombre}</h3>
           <p class="precio">$${producto.precio.toFixed(2)}</p>
-          <button class="btn-agregar">Agregar al Carrito</button>
+          <button class="btn-agregar" data-id="${producto.id}">Agregar al Carrito</button>
         </div>
       </div>
     `;
@@ -214,5 +222,151 @@ if (window.location.pathname.includes('catalogo.html')) {
   document.addEventListener('DOMContentLoaded', () => {
      renderizarCatalogo();
      configurarFiltros();
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+// --- CARRITO ---
+const productosPorId = {};
+let carrito = [];
+try {
+  carrito = JSON.parse(localStorage.getItem('carrito_todotiempo')) || [];
+} catch (e) {
+  carrito = [];
+}
+
+function guardarCarrito() {
+  localStorage.setItem('carrito_todotiempo', JSON.stringify(carrito));
+  actualizarContador();
+}
+
+function actualizarContador() {
+  const contador = document.getElementById('contador-carrito');
+  if (!contador) return;
+  contador.textContent = carrito.reduce((suma, item) => suma + item.cantidad, 0);
+}
+
+function totalCarrito() {
+  return carrito.reduce((suma, item) => suma + item.precio * item.cantidad, 0);
+}
+
+function agregarAlCarrito(id) {
+  const producto = productosPorId[id];
+  if (!producto) return;
+  const existente = carrito.find(item => String(item.id) === String(id));
+  if (existente) {
+    existente.cantidad++;           
+  } else {
+    carrito.push({ ...producto, cantidad: 1 });
+  }
+  guardarCarrito();
+}
+
+function cambiarCantidad(id, cambio) {
+  const item = carrito.find(i => String(i.id) === String(id));
+  if (!item) return;
+  item.cantidad += cambio;
+  if (item.cantidad <= 0) carrito = carrito.filter(i => String(i.id) !== String(id));
+  guardarCarrito();
+  renderizarCarrito();
+}
+
+function quitarDelCarrito(id) {
+  carrito = carrito.filter(i => String(i.id) !== String(id));
+  guardarCarrito();
+  renderizarCarrito();
+}
+
+function renderizarCarrito() {
+  const lista = document.getElementById('lista-carrito');
+  const totalEl = document.getElementById('total-carrito');
+  if (!lista) return;
+
+  if (carrito.length === 0) {
+    lista.innerHTML = '<p class="carrito-vacio">Tu carrito está vacío</p>';
+  } else {
+    lista.innerHTML = carrito.map(item => `
+      <div class="item-carrito">
+        <img src="${item.imagen}" alt="${item.nombre}">
+        <div>
+          <h4>${item.nombre}</h4>
+          <p class="precio-item">$${(item.precio * item.cantidad).toFixed(2)}</p>
+        </div>
+        <div class="controles-cantidad">
+          <button type="button" data-accion="restar" data-id="${item.id}">−</button>
+          <span>${item.cantidad}</span>
+          <button type="button" data-accion="sumar" data-id="${item.id}">+</button>
+          <button type="button" data-accion="quitar" data-id="${item.id}">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  totalEl.textContent = '$' + totalCarrito().toFixed(2);
+}
+
+const modalCarrito = document.getElementById('modal-carrito');
+
+function abrirCarrito() {
+  renderizarCarrito();
+  modalCarrito.classList.add('abierto');
+}
+function cerrarCarrito() {
+  modalCarrito.classList.remove('abierto');
+}
+
+if (modalCarrito) {
+  actualizarContador();
+
+  
+  document.getElementById('btn-carrito').addEventListener('click', (e) => {
+    e.preventDefault();
+    abrirCarrito();
+  });
+  document.getElementById('cerrar-carrito').addEventListener('click', cerrarCarrito);
+  modalCarrito.addEventListener('click', (e) => {
+    if (e.target === modalCarrito) cerrarCarrito();   // clic en el fondo oscuro
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarCarrito();
+  });
+
+  
+  document.getElementById('lista-carrito').addEventListener('click', (e) => {
+    const boton = e.target.closest('button[data-accion]');
+    if (!boton) return;
+    const id = boton.dataset.id;
+    if (boton.dataset.accion === 'sumar') cambiarCantidad(id, 1);
+    if (boton.dataset.accion === 'restar') cambiarCantidad(id, -1);
+    if (boton.dataset.accion === 'quitar') quitarDelCarrito(id);
+  });
+
+  document.getElementById('vaciar-carrito').addEventListener('click', () => {
+    carrito = [];
+    guardarCarrito();
+    renderizarCarrito();
+  });
+
+  document.getElementById('finalizar-compra').addEventListener('click', () => {
+    if (carrito.length === 0) return;
+    // AQUÍ después se puede guardar el pedido en Supabase
+    alert('Total a pagar: $' + totalCarrito().toFixed(2));
+  });
+
+  // botón "Agregar al Carrito" de las tarjetas
+  document.getElementById('contenedor-ropa').addEventListener('click', (e) => {
+    const boton = e.target.closest('.btn-agregar');
+    if (!boton) return;
+    agregarAlCarrito(boton.dataset.id);
+    boton.textContent = '¡Agregado ✓!';
+    setTimeout(() => boton.textContent = 'Agregar al Carrito', 900);
   });
 }

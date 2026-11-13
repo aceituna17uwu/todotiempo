@@ -15,7 +15,8 @@
       <img src="logoa.png" alt="Logo" class="logo-nav">         
       <span class="nombre-marca">Todo Tiempo</span>
     </a>
-    <div class="menu-enlaces">             
+    <div class="menu-enlaces">    
+      <a href="#" id="btn-carrito">🛒 CARRITO <span id="contador-carrito">0</span></a>           
       <a href="#" id="btn-salir">CERRAR SESIÓN</a> 
       <a href="chat.html">Chat</a>
     </div>     
@@ -44,7 +45,24 @@
     <div id="contenedor-ropa" class="grid-productos">
         <!-- Las tarjetas se inyectan con JS -->
     </div>
-  </main>     
+  </main> 
+      
+  <div id="modal-carrito" class="modal-fondo">
+  <div class="modal-carrito">
+    <div class="modal-cabecera">
+      <h2>Tu carrito</h2>
+      <button type="button" id="cerrar-carrito">✕</button>
+    </div>
+    <div id="lista-carrito"></div>
+    <div class="modal-pie">
+      <p class="total">Total: <span id="total-carrito">$0.00</span></p>
+      <div class="acciones">
+        <button type="button" id="vaciar-carrito">Vaciar</button>
+        <button type="submit" id="finalizar-compra">Finalizar</button>
+      </div>
+    </div>
+  </div>
+</div>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>     
   <script src="app.js"></script> 
