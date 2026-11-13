@@ -188,7 +188,7 @@ button:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px var(--ne
 .btn-filtro.activo { background-color: var(--color-actual); color: var(--negro); border-color: var(--negro); box-shadow: 4px 4px 0px var(--tinta); }
 
 /* GRID Y TARJETAS */
-.grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 32px; }
+.grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
 .tarjeta-producto {
   background-color: var(--superficie);
   border: 3px solid var(--tinta);
@@ -198,20 +198,25 @@ button:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px var(--ne
   flex-direction: column;
 }
 .tarjeta-producto:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--color-actual); }
-.imagen-contenedor { width: 100%; height: 320px; background-color: var(--papel); border-bottom: 3px solid var(--tinta); }
+.imagen-contenedor { width: 100%; height: 220px; background-color: #ffffff; border-bottom: 3px solid var(--tinta);
+display: flex;
+  align-items: center; 
+  justify-content: center;}
 .imagen-contenedor img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: grayscale(100%) contrast(1.2); /* Efecto blanco y negro por defecto */
+object-fit: contain;
+  padding: 10px;
   transition: filter 0.3s;
 }
 .tarjeta-producto:hover .imagen-contenedor img { filter: grayscale(0%) contrast(1); /* Regresa a color al hacer hover */ }
 
-.info-producto { padding: 20px; text-align: left; display: flex; flex-direction: column; flex-grow: 1; }
-.info-producto h3 { font-size: 1.3rem; font-weight: 800; margin: 0 0 12px 0; text-transform: uppercase; }
-.info-producto .precio { font-size: 1.6rem; font-weight: 800; color: var(--color-actual); margin: 0 0 20px 0; }
-.btn-agregar { margin-top: auto; width: 100%; background-color: var(--papel); color: var(--tinta); }
+.info-producto { padding: 16px; text-align: left; display: flex; flex-direction: column; flex-grow: 1; }
+.info-producto h3 { font-size: 1.2rem; font-weight: 800; margin: 0 0 10px 0; text-transform: uppercase; min-height: 2.8em; /* Espacio reservado exactamente para 2 líneas */
+  display: flex;
+  align-items: center; }
+.info-producto .precio { font-size: 1.4rem; font-weight: 800; color: var(--color-actual); margin: 0 0 16px 0; }
+.btn-agregar { margin-top: auto; width: 100%; background-color: var(--papel); color: var(--tinta); padding: 12px 16px;}
 .btn-agregar:hover { background-color: var(--color-actual); color: var(--negro); border-color: var(--negro); }
 
 @media (max-width: 600px) {
